@@ -4,39 +4,65 @@ using UnityEngine;
 
 public class Producer
 {
-    private Seed _seed;
-    private int _yield;
+    public int Yield { get; private set; }
+    public int RemainingYield { get; private set; }
+    public int YieldInterval { get; private set; }
+
+    public event Action<int, int> OnYieldChange;
 
     public Producer(Seed seed)
     {
-        _seed = seed;
+        YieldInterval = seed.YieldInterval;
+        RemainingYield = seed.MaxYield;
     }
 
-    public IEnumerator IE_Producing(Action<int,int> OnProduceYield, Action<float> OnTimer)
+    public IEnumerator IE_Producing(Action<float> OnTimer)
     {
         float timer = 0f;
-        OnProduceYield?.Invoke(_yield, _seed.MaxYield);
+        SetYield(0);
 
-        while (_yield < _seed.MaxYield)
+        while (Yield < RemainingYield)
         {
-            float timeLeft = Mathf.Max(_seed.MaxYield - timer, 0);
+            float timeLeft = Mathf.Max(YieldInterval - timer, 0);
             OnTimer?.Invoke(timeLeft);
 
             timer += Time.deltaTime;
 
-            if (timer >= _seed.MaxYield)
+            if (timer >= YieldInterval)
             {
-                ProduceYield(OnProduceYield);
+                ProduceProduct();
                 timer = 0;
             }
 
             yield return null;
         }
+
+        OnYieldChange = null;
     }
 
-    private void ProduceYield(Action<int, int> OnProduceYield)
+    private void ProduceProduct()
     {
-        _yield = Mathf.Clamp(_yield + 1, 0, _seed.MaxYield);
-        OnProduceYield?.Invoke(_yield, _seed.MaxYield);
+        int yield = Mathf.Clamp(Yield + 1, 0, RemainingYield);
+
+        SetYield(yield);
+    }
+
+    private void SetYield(int yield)
+    {
+        Yield = yield;
+        OnYieldChange?.Invoke(Yield, RemainingYield);
+    }
+
+    public bool TryConsumeYield(out int yield)
+    {
+        yield = Yield;
+
+        if (Yield == 0) return false;
+
+        RemainingYield = Mathf.Clamp(RemainingYield - Yield, 0, RemainingYield);
+
+        SetYield(0);
+
+        return true;
     }
 }

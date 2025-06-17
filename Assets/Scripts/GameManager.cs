@@ -32,8 +32,8 @@ public class GameManager : MonoBehaviour
     {
         _inventory = new();
 
-        _inventory.AddSeed(new Seed("Tomato", 30, 10, 5), 10);
-        _inventory.AddSeed(new Seed("Blueberry", 50, 10, 5), 10);
-        _inventory.AddSeed(new Seed("Cow", 100, 10, 10), 5);
+        _inventory.AddItem(new Seed("Tomato Seed", "Tomato", 30, 10, 5), 10);
+        _inventory.AddItem(new Seed("Blueberry Seed", "Blueberry", 50, 10, 5), 10);
+        _inventory.AddItem(new Seed("Cow", "Gallon", 100, 10, 10), 5);
     }
 }

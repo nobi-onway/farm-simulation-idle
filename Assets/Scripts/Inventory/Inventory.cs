@@ -1,18 +1,35 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Inventory
 {
-    public List<Seed> Seeds { get; private set; }
+    public List<Seed> Seeds => Items.OfType<Seed>().ToList();
+    public List<IInventoryItem> Items { get; private set; }
+
+    public event Action<IInventoryItem> OnAddItem;
+    public event Action<IInventoryItem> OnUpdateItem;
 
     public Inventory()
     {
-        Seeds = new();
+        Items = new();
     }
 
-    public void AddSeed(Seed seed, int quantity)
+    public void AddItem(IInventoryItem item, int quantity)
     {
-        seed.Quantity = quantity;
+        IInventoryItem existingItem = Items.FirstOrDefault(i => i.Id == item.Id);
 
-        Seeds.Add(seed);
+        if (existingItem != null)
+        {
+            existingItem.Quantity += quantity;
+            OnUpdateItem?.Invoke(existingItem);
+            return;
+        }
+
+        item.Quantity = quantity;
+
+        Items.Add(item);
+
+        OnAddItem?.Invoke(item);
     }
 }

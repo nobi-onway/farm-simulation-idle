@@ -205,8 +205,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -341,8 +341,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -910,6 +910,7 @@ MonoBehaviour:
   _producerTMP: {fileID: 220244702}
   _yieldTMP: {fileID: 41992718}
   _processTMP: {fileID: 1706267030}
+  _harvestButton: {fileID: 1853090700}
 --- !u!114 &886996430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1185,7 +1186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a647eaf210aa35942851410f78c514b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemUIPrefab: {fileID: 6714544292315720296, guid: 098a216214d78954791f6b6d9413dc7d, type: 3}
+  _itemUIPrefab: {fileID: 2261918779190005332, guid: 098a216214d78954791f6b6d9413dc7d, type: 3}
 --- !u!1 &1432093830
 GameObject:
   m_ObjectHideFlags: 0
@@ -1492,8 +1493,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
