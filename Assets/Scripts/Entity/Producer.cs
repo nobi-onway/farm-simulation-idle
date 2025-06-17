@@ -10,16 +10,17 @@ public class Producer
 
     public event Action<int, int> OnYieldChange;
 
-    public Producer(Seed seed)
+    public void Initialize(int yieldInterval, int remainingYield)
     {
-        YieldInterval = seed.YieldInterval;
-        RemainingYield = seed.MaxYield;
+        YieldInterval = yieldInterval;
+        RemainingYield = remainingYield;
+
+        SetYield(0);
     }
 
     public IEnumerator IE_Producing(Action<float> OnTimer)
     {
         float timer = 0f;
-        SetYield(0);
 
         while (Yield < RemainingYield)
         {

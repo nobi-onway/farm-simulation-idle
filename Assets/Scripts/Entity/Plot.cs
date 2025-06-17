@@ -2,15 +2,25 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+
 public class Plot
 {
     private Producer _producer;
-    public bool IsPlanting => _producer != null;
-    private Seed _seed => GameManager.Instance.Inventory.Seeds[0];
+    private Seed _seed;
+
+    public Plot()
+    {
+        _producer = new();
+    }
+
+    public void DoSeed(Seed seed)
+    {
+        _seed = seed;
+        _producer.Initialize(seed.YieldInterval, seed.MaxYield);
+    }
 
     public IEnumerator IE_Plant(Action<Seed> OnPlant, Action<int, int> OnYieldChange, Action<float> OnTimer, Action OnDecay)
     {
-        _producer = new Producer(_seed);
         _producer.OnYieldChange += OnYieldChange;
         OnPlant?.Invoke(_seed);
 
@@ -20,9 +30,8 @@ public class Plot
 
     public IEnumerator IE_Decay(float startTime, Action OnDecay)
     {
-        while (Time.time - startTime < 10) yield return null;
+        while (Time.time - startTime < 5) { Debug.Log(Utils.TimeFormatter(Time.time - startTime)); yield return null; }
 
-        _producer = null;
         OnDecay?.Invoke();
     }
 

@@ -1,12 +1,13 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class PlotUI : MonoBehaviour, IPointerDownHandler
+public class PlotUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _producerTMP, _yieldTMP, _processTMP;
     [SerializeField] private Button _harvestButton;
+    [SerializeField] private RectTransform _producePanel, _plantPanel;
+    [SerializeField] private Button _seedButtonPrefab;
 
     private Plot _plot = new();
 
@@ -20,17 +21,39 @@ public class PlotUI : MonoBehaviour, IPointerDownHandler
         _harvestButton.onClick.RemoveListener(HandleHarvestButtonPressed);
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    private void Start()
     {
-        if (_plot.IsPlanting) return;
+        InitializePlantPanel();
+    }
 
+    private void InitializePlantPanel()
+    {
+        _plantPanel.gameObject.SetActive(true);
+
+        foreach (RectTransform child in _plantPanel)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Seed seed in GameManager.Instance.Inventory.Seeds)
+        {
+            Button seedButton = Instantiate(_seedButtonPrefab, _plantPanel);
+            seedButton.GetComponentInChildren<TextMeshProUGUI>().SetText(seed.Name);
+            seedButton.onClick.AddListener(() => OnSeedButtonPressed(seed));
+        }
+    }
+
+    private void OnSeedButtonPressed(Seed seed)
+    {
+        _plantPanel.gameObject.SetActive(false);
+        _plot.DoSeed(seed);
+
+        _producePanel.gameObject.SetActive(true);
         StartCoroutine(_plot.IE_Plant(UpdateProducerTMP, UpdateYieldTMP, UpdateProcessTMP, ResetUI));
     }
 
     private void HandleHarvestButtonPressed()
     {
-        if(!_plot.IsPlanting) return;
-        
         _plot.Harvest();
     }
 
@@ -39,6 +62,9 @@ public class PlotUI : MonoBehaviour, IPointerDownHandler
         _producerTMP.SetText("None");
         _yieldTMP.SetText("0/0");
         _processTMP.SetText("0");
+
+        _producePanel.gameObject.SetActive(false);
+        InitializePlantPanel();
     }
 
     private void UpdateProducerTMP(Seed seed)
