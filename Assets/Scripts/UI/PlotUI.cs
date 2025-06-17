@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class PlotUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _producerTMP, _yieldTMP, _processTMP;
-    [SerializeField] private Button _harvestButton;
+    [SerializeField] private Button _harvestButton, _upgradeButton;
     [SerializeField] private RectTransform _producePanel, _plantPanel;
     [SerializeField] private Button _seedButtonPrefab;
 
@@ -14,11 +14,13 @@ public class PlotUI : MonoBehaviour
     private void OnEnable()
     {
         _harvestButton.onClick.AddListener(HandleHarvestButtonPressed);
+        _upgradeButton.onClick.AddListener(HandleUpgradeButtonPressed);
     }
 
     private void OnDisable()
     {
         _harvestButton.onClick.RemoveListener(HandleHarvestButtonPressed);
+        _upgradeButton.onClick.RemoveListener(HandleUpgradeButtonPressed);
     }
 
     private void Start()
@@ -39,14 +41,14 @@ public class PlotUI : MonoBehaviour
         {
             Button seedButton = Instantiate(_seedButtonPrefab, _plantPanel);
             seedButton.GetComponentInChildren<TextMeshProUGUI>().SetText(seed.Name);
-            seedButton.onClick.AddListener(() => OnSeedButtonPressed(seed));
+            seedButton.onClick.AddListener(() => HandleSeedButtonPressed(seed));
         }
     }
 
-    private void OnSeedButtonPressed(Seed seed)
+    private void HandleSeedButtonPressed(Seed seed)
     {
         _plantPanel.gameObject.SetActive(false);
-        _plot.DoSeed(seed);
+        _plot.PlantSeed(seed);
 
         _producePanel.gameObject.SetActive(true);
         StartCoroutine(_plot.IE_Plant(UpdateProducerTMP, UpdateYieldTMP, UpdateProcessTMP, ResetUI));
@@ -55,6 +57,11 @@ public class PlotUI : MonoBehaviour
     private void HandleHarvestButtonPressed()
     {
         _plot.Harvest();
+    }
+
+    private void HandleUpgradeButtonPressed()
+    {
+        _plot.Upgrade();
     }
 
     private void ResetUI()

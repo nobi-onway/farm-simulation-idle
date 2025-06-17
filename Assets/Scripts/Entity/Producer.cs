@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class Producer
 {
-    public int Yield { get; private set; }
-    public int RemainingYield { get; private set; }
-    public int YieldInterval { get; private set; }
+    private int _yield;
+    private int _remainingYield;
+    private int _yieldInterval;
+    public float YieldBoost { get; set; }
 
+    private float YieldTimer => (float)_yieldInterval / (1 + YieldBoost);
     public event Action<int, int> OnYieldChange;
 
-    public void Initialize(int yieldInterval, int remainingYield)
+    public Producer(int yieldInterval, int remainingYield, float yieldBoost = 0)
     {
-        YieldInterval = yieldInterval;
-        RemainingYield = remainingYield;
+        _yieldInterval = yieldInterval;
+        _remainingYield = remainingYield;
+        YieldBoost = yieldBoost;
 
         SetYield(0);
     }
@@ -22,14 +25,14 @@ public class Producer
     {
         float timer = 0f;
 
-        while (Yield < RemainingYield)
+        while (_yield < _remainingYield)
         {
-            float timeLeft = Mathf.Max(YieldInterval - timer, 0);
+            float timeLeft = Mathf.Max(YieldTimer - timer, 0);
             OnTimer?.Invoke(timeLeft);
 
             timer += Time.deltaTime;
 
-            if (timer >= YieldInterval)
+            if (timer >= YieldTimer)
             {
                 ProduceProduct();
                 timer = 0;
@@ -43,24 +46,24 @@ public class Producer
 
     private void ProduceProduct()
     {
-        int yield = Mathf.Clamp(Yield + 1, 0, RemainingYield);
+        int yield = Mathf.Clamp(_yield + 1, 0, _remainingYield);
 
         SetYield(yield);
     }
 
     private void SetYield(int yield)
     {
-        Yield = yield;
-        OnYieldChange?.Invoke(Yield, RemainingYield);
+        _yield = yield;
+        OnYieldChange?.Invoke(_yield, _remainingYield);
     }
 
     public bool TryConsumeYield(out int yield)
     {
-        yield = Yield;
+        yield = _yield;
 
-        if (Yield == 0) return false;
+        if (_yield == 0) return false;
 
-        RemainingYield = Mathf.Clamp(RemainingYield - Yield, 0, RemainingYield);
+        _remainingYield = Mathf.Clamp(_remainingYield - _yield, 0, _remainingYield);
 
         SetYield(0);
 

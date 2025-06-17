@@ -2,21 +2,18 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-
 public class Plot
 {
+    private const float DECAY_TIMER = 5.0f;
     private Producer _producer;
     private Seed _seed;
 
-    public Plot()
-    {
-        _producer = new();
-    }
+    private float _boost;
 
-    public void DoSeed(Seed seed)
+    public void PlantSeed(Seed seed)
     {
         _seed = seed;
-        _producer.Initialize(seed.YieldInterval, seed.MaxYield);
+        _producer = new(seed.YieldInterval, seed.MaxYield, _boost);
     }
 
     public IEnumerator IE_Plant(Action<Seed> OnPlant, Action<int, int> OnYieldChange, Action<float> OnTimer, Action OnDecay)
@@ -30,8 +27,10 @@ public class Plot
 
     public IEnumerator IE_Decay(float startTime, Action OnDecay)
     {
-        while (Time.time - startTime < 5) { Debug.Log(Utils.TimeFormatter(Time.time - startTime)); yield return null; }
+        while (Time.time - startTime < DECAY_TIMER) { Debug.Log(Utils.TimeFormatter(Time.time - startTime)); yield return null; }
 
+        _seed = null;
+        _producer = null;
         OnDecay?.Invoke();
     }
 
@@ -40,5 +39,11 @@ public class Plot
         if (!_producer.TryConsumeYield(out int yield)) return;
 
         GameManager.Instance.Inventory.AddItem(new Product(_seed.ProductName), yield);
+    }
+
+    public void Upgrade()
+    {
+        _boost += 0.1f;
+        _producer.YieldBoost = _boost;
     }
 }

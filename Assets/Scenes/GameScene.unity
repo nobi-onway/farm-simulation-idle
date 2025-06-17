@@ -974,6 +974,7 @@ MonoBehaviour:
   _yieldTMP: {fileID: 41992718}
   _processTMP: {fileID: 1706267030}
   _harvestButton: {fileID: 1853090700}
+  _upgradeButton: {fileID: 1432093832}
   _producePanel: {fileID: 574732018}
   _plantPanel: {fileID: 1739433177}
   _seedButtonPrefab: {fileID: 8297324845228386102, guid: f21cdaddaf592cd4fba96d8cea61fafa, type: 3}

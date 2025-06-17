@@ -7,7 +7,6 @@ public class Seed : IInventoryItem
     public int MaxYield { get; private set; }
 
     public int Quantity { get; set; }
-
     public int Id => Name.GetHashCode();
 
     public Seed(string name, string productName, int cost, int yieldInterval, int maxYield)
