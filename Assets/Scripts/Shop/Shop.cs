@@ -13,8 +13,11 @@ public class Shop
 
     public void BuyItem(IShopItem item)
     {
-        if (!GameManager.Instance.Wallet.TryWithdraw(item.Cost)) return;
+        if (!GameManager.Instance.Wallet.TryWithdraw(item.Price)) return;
 
-        GameManager.Instance.Inventory.TryAddItem(item.Id);
+        if (GameManager.Instance.Inventory.TryAddItem(item.Id)) return;
+
+        ProducerItem producerItem = new(GameManager.Instance.ProducerDataLookUp[item.Id]);
+        GameManager.Instance.Inventory.AddItem(producerItem, 1);
     }
 }

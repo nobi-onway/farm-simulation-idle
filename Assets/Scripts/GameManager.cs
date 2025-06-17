@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -24,29 +25,49 @@ public class GameManager : MonoBehaviour
     public Shop Shop { get; private set; }
     public Wallet Wallet { get; private set; }
 
+    public Dictionary<string, ProducerData> ProducerDataLookUp;
+    private Dictionary<string, InventoryData> InventoryDataLookUp;
+    private Dictionary<string, ShopData> ShopDataLookUp;
+
     private void Awake()
     {
+        InitialResource();
+
         InitializeInventory();
         InitializeShop();
         InitializeWallet();
+    }
+
+    private void InitialResource()
+    {
+        ProducerDataLookUp ??= LoaderUtils.LoadProducerData();
+        InventoryDataLookUp ??= LoaderUtils.LoadInventoryData("Assets/Config/InitialInventoryData.csv");
+        ShopDataLookUp ??= LoaderUtils.LoadShopData();
     }
 
     private void InitializeInventory()
     {
         Inventory = new();
 
-        Inventory.AddItem(new Seed("Tomato Seed", 30, 10, 5), 10);
-        Inventory.AddItem(new Seed("Blueberry Seed", 50, 10, 5), 10);
-        Inventory.AddItem(new Seed("Cow", 100, 10, 10), 5);
+        foreach (string key in InventoryDataLookUp.Keys)
+        {
+            ProducerItem producerItem = new(ProducerDataLookUp[key]);
+            int quantity = InventoryDataLookUp[key].Quantity;
+
+            Inventory.AddItem(producerItem, quantity);
+        }
     }
 
     private void InitializeShop()
     {
         Shop = new();
 
-        Shop.AddItem(new Seed("Tomato Seed", 30, 10, 5));
-        Shop.AddItem(new Seed("Blueberry Seed", 50, 10, 5));
-        Shop.AddItem(new Seed("Cow", 100, 10, 10));
+        foreach (ShopData data in ShopDataLookUp.Values)
+        {
+            ProducerItem producerItem = new(data);
+
+            Shop.AddItem(producerItem);
+        }
     }
 
     private void InitializeWallet()

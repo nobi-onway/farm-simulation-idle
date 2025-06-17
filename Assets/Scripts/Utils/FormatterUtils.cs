@@ -1,6 +1,6 @@
 using System;
 
-public static class Utils
+public static class FormatterUtils
 {
     public static string TimeFormatter(float time)
     {

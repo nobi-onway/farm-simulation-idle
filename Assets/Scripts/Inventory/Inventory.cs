@@ -4,7 +4,7 @@ using System.Linq;
 
 public class Inventory
 {
-    public List<Seed> Seeds => Items.OfType<Seed>().ToList();
+    public List<ProducerItem> ProducerItems => Items.OfType<ProducerItem>().ToList();
     public List<IInventoryItem> Items { get; private set; }
 
     public event Action<IInventoryItem> OnAddItem;
@@ -26,7 +26,7 @@ public class Inventory
         OnAddItem?.Invoke(item);
     }
 
-    public bool TryAddItem(int id)
+    public bool TryAddItem(string id)
     {
         IInventoryItem existingItem = Items.FirstOrDefault(i => i.Id == id);
 

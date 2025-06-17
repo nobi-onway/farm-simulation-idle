@@ -4,22 +4,21 @@ using UnityEngine;
 
 public class Plot
 {
-    private const float DECAY_TIMER = 5.0f;
     private Producer _producer;
-    private Seed _seed;
+    private ProducerItem _producerItem;
 
     private float _boost;
 
-    public void PlantSeed(Seed seed)
+    public void PlantSeed(ProducerItem seed)
     {
-        _seed = seed;
+        _producerItem = seed;
         _producer = new(seed.YieldInterval, seed.MaxYield, _boost);
     }
 
-    public IEnumerator IE_Plant(Action<Seed> OnPlant, Action<int, int> OnYieldChange, Action<float> OnTimer, Action OnDecay)
+    public IEnumerator IE_Plant(Action<ProducerItem> OnPlant, Action<int, int> OnYieldChange, Action<float> OnTimer, Action OnDecay)
     {
         _producer.OnYieldChange += OnYieldChange;
-        OnPlant?.Invoke(_seed);
+        OnPlant?.Invoke(_producerItem);
 
         yield return _producer.IE_Producing(OnTimer);
         yield return IE_Decay(Time.time, OnDecay);
@@ -27,9 +26,9 @@ public class Plot
 
     public IEnumerator IE_Decay(float startTime, Action OnDecay)
     {
-        while (Time.time - startTime < DECAY_TIMER) { Debug.Log(Utils.TimeFormatter(Time.time - startTime)); yield return null; }
+        while (Time.time - startTime < _producerItem.DecayTimer) yield return null;
 
-        _seed = null;
+        _producerItem = null;
         _producer = null;
         OnDecay?.Invoke();
     }
@@ -38,7 +37,7 @@ public class Plot
     {
         if (!_producer.TryConsumeYield(out int yield)) return;
 
-        GameManager.Instance.Wallet.Deposit(yield * _seed.Cost);
+        GameManager.Instance.Wallet.Deposit(yield * _producerItem.Price);
     }
 
     public void Upgrade()

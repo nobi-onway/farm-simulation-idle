@@ -1,0 +1,4 @@
+Id,Name,YieldInterval,MaxYield,DecayTimer
+tomato,Tomato,10,40,1
+blueberry,Blueberry,15,40,1
+cow,Cow,30,100,1

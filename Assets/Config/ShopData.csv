@@ -1,0 +1,4 @@
+Id,DisplayName,Price,BulkOnly,BulkAmount
+tomato,Tomato Seed,30,FALSE,0
+blueberry,Blueberry Seed,50,FALSE,0
+cow,Cow,100,FALSE,0

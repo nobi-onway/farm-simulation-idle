@@ -37,7 +37,7 @@ public class PlotUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (Seed seed in GameManager.Instance.Inventory.Seeds)
+        foreach (ProducerItem seed in GameManager.Instance.Inventory.ProducerItems)
         {
             Button seedButton = Instantiate(_seedButtonPrefab, _plantPanel);
             seedButton.GetComponentInChildren<TextMeshProUGUI>().SetText(seed.Name);
@@ -45,7 +45,7 @@ public class PlotUI : MonoBehaviour
         }
     }
 
-    private void HandleSeedButtonPressed(Seed seed)
+    private void HandleSeedButtonPressed(ProducerItem seed)
     {
         _plantPanel.gameObject.SetActive(false);
         _plot.PlantSeed(seed);
@@ -74,7 +74,7 @@ public class PlotUI : MonoBehaviour
         InitializePlantPanel();
     }
 
-    private void UpdateProducerTMP(Seed seed)
+    private void UpdateProducerTMP(ProducerItem seed)
     {
         _producerTMP.SetText(seed.Name);
     } 
@@ -86,6 +86,6 @@ public class PlotUI : MonoBehaviour
 
     private void UpdateProcessTMP(float timeLeft)
     {
-        _processTMP.SetText(Utils.TimeFormatter(timeLeft));
+        _processTMP.SetText(FormatterUtils.TimeFormatter(timeLeft));
     }
 }

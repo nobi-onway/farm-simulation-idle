@@ -4,6 +4,8 @@ public class Product : IInventoryItem
     public int Quantity { get; set; }
     public int Id => Name.GetHashCode();
 
+    string IInventoryItem.Id => throw new System.NotImplementedException();
+
     public Product(string name)
     {
         Name = name;

@@ -11,7 +11,7 @@ public class ShopItemUI : MonoBehaviour
     public void Initialize(IShopItem shopItem, UnityAction OnBuyItem)
     {
         _titleTMP.SetText(shopItem.Name);
-        _buyButton.GetComponentInChildren<TextMeshProUGUI>().SetText($"Buy: {shopItem.Cost}");
+        _buyButton.GetComponentInChildren<TextMeshProUGUI>().SetText($"Buy: {shopItem.Price}");
         _buyButton.onClick.AddListener(OnBuyItem);
     }
 }

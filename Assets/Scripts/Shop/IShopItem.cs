@@ -1,6 +1,6 @@
 public interface IShopItem
 {
-    public int Id { get; }
+    public string Id { get; }
     public string Name { get; }
-    public int Cost { get; }
+    public int Price { get; }
 }

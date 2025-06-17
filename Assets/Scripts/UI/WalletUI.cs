@@ -19,6 +19,6 @@ public class WalletUI : MonoBehaviour
 
     private void UpdateBalance(int balance)
     {
-        _balanceTMP.SetText($"Balance: {Utils.BalanceFormatter(balance)}");
+        _balanceTMP.SetText($"Balance: {FormatterUtils.BalanceFormatter(balance)}");
     }
 }
