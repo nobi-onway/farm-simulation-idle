@@ -11,7 +11,14 @@ public class PlotUI : MonoBehaviour, IPointerDownHandler
     {
         if (_plot.IsPlanting) return;
 
-        StartCoroutine(_plot.IE_Plant(UpdateProducerTMP, UpdateYieldTMP, UpdateProcessTMP));
+        StartCoroutine(_plot.IE_Plant(UpdateProducerTMP, UpdateYieldTMP, UpdateProcessTMP, ResetUI));
+    }
+
+    private void ResetUI()
+    {
+        _producerTMP.SetText("None");
+        _yieldTMP.SetText("0/0");
+        _processTMP.SetText("0");
     }
 
     private void UpdateProducerTMP(Seed seed)
