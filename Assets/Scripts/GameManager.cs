@@ -20,20 +20,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private Inventory _inventory;
-    public Inventory Inventory => _inventory;
+    public Inventory Inventory { get; private set; }
+    public Shop Shop { get; private set; }
+    public Wallet Wallet { get; private set; }
 
     private void Awake()
     {
         InitializeInventory();
+        InitializeShop();
+        InitializeWallet();
     }
 
     private void InitializeInventory()
     {
-        _inventory = new();
+        Inventory = new();
 
-        _inventory.AddItem(new Seed("Tomato Seed", "Tomato", 30, 10, 5), 10);
-        _inventory.AddItem(new Seed("Blueberry Seed", "Blueberry", 50, 10, 5), 10);
-        _inventory.AddItem(new Seed("Cow", "Gallon", 100, 10, 10), 5);
+        Inventory.AddItem(new Seed("Tomato Seed", 30, 10, 5), 10);
+        Inventory.AddItem(new Seed("Blueberry Seed", 50, 10, 5), 10);
+        Inventory.AddItem(new Seed("Cow", 100, 10, 10), 5);
+    }
+
+    private void InitializeShop()
+    {
+        Shop = new();
+
+        Shop.AddItem(new Seed("Tomato Seed", 30, 10, 5));
+        Shop.AddItem(new Seed("Blueberry Seed", 50, 10, 5));
+        Shop.AddItem(new Seed("Cow", 100, 10, 10));
+    }
+
+    private void InitializeWallet()
+    {
+        Wallet = new(1000);
     }
 }
