@@ -11,13 +11,13 @@ public class ShopUI : MonoBehaviour
 
     private void GenerateItems()
     {
-        foreach (IShopItem shopItem in GameManager.Instance.Shop.Items)
+        foreach (IBuyableItem shopItem in GameManager.Instance.Shop.Items)
         {
             GenerateItem(shopItem);
         }
     }
 
-    private void GenerateItem(IShopItem shopItem)
+    private void GenerateItem(IBuyableItem shopItem)
     {
         ShopItemUI shopItemUI = Instantiate(_shopItemUIPrefab, this.transform);
         shopItemUI.Initialize(shopItem, () => GameManager.Instance.Shop.BuyItem(shopItem));

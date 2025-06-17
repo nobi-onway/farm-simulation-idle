@@ -8,7 +8,7 @@ public class ShopItemUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _titleTMP;
     [SerializeField] private Button _buyButton;
 
-    public void Initialize(IShopItem shopItem, UnityAction OnBuyItem)
+    public void Initialize(IBuyableItem shopItem, UnityAction OnBuyItem)
     {
         _titleTMP.SetText(shopItem.Name);
         _buyButton.GetComponentInChildren<TextMeshProUGUI>().SetText($"Buy: {shopItem.Price}");

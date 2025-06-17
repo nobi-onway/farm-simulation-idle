@@ -37,7 +37,7 @@ public class Plot
     {
         if (!_producer.TryConsumeYield(out int yield)) return;
 
-        GameManager.Instance.Wallet.Deposit(yield * _producerItem.Price);
+        GameManager.Instance.Inventory.AddItem(new Product(GameManager.Instance.ProductDataLookUp[_producerItem.Id]), yield);
     }
 
     public void Upgrade()

@@ -2,16 +2,16 @@ using System.Collections.Generic;
 
 public class Shop
 {
-    public List<IShopItem> Items { get; private set; }
+    public List<IBuyableItem> Items { get; private set; }
 
     public Shop()
     {
         Items = new();
     }
 
-    public void AddItem(IShopItem item) => Items.Add(item);
+    public void AddItem(IBuyableItem item) => Items.Add(item);
 
-    public void BuyItem(IShopItem item)
+    public void BuyItem(IBuyableItem item)
     {
         if (!GameManager.Instance.Wallet.TryWithdraw(item.Price)) return;
 

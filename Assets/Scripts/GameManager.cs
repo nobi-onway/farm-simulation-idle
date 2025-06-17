@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public Dictionary<string, ProducerData> ProducerDataLookUp;
     private Dictionary<string, InventoryData> InventoryDataLookUp;
     private Dictionary<string, ShopData> ShopDataLookUp;
+    public Dictionary<string, ProductData> ProductDataLookUp;
 
     private void Awake()
     {
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
         ProducerDataLookUp ??= LoaderUtils.LoadProducerData();
         InventoryDataLookUp ??= LoaderUtils.LoadInventoryData("Assets/Config/InitialInventoryData.csv");
         ShopDataLookUp ??= LoaderUtils.LoadShopData();
+        ProductDataLookUp ??= LoaderUtils.LoadProductData();
     }
 
     private void InitializeInventory()

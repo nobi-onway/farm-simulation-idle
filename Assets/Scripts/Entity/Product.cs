@@ -1,13 +1,17 @@
-public class Product : IInventoryItem
+public class Product : IInventoryItem, ISellableItem
 {
     public string Name { get; private set; }
     public int Quantity { get; set; }
-    public int Id => Name.GetHashCode();
+    public string Id { get; private set; }
+    public string ProducerId { get; private set; }
 
-    string IInventoryItem.Id => throw new System.NotImplementedException();
+    public int SellPrice { get; private set; }
 
-    public Product(string name)
+    public Product(ProductData data)
     {
-        Name = name;
+        Id = data.Id;
+        ProducerId = data.ProducerId;
+        Name = data.Name;
+        SellPrice = data.SellPrice;
     }
 }
