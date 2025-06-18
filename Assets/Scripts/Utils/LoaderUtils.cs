@@ -117,4 +117,27 @@ public static class LoaderUtils
 
         return lookUp;
     }
+
+    public static Dictionary<string, PlotData> LoadPlotData()
+    {
+        string[] lines = File.ReadAllLines("Assets/Config/PlotData.csv");
+        Dictionary<string, PlotData> lookUp = new();
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] cells = lines[i].Split(',');
+
+            PlotData data = new
+            (
+                cells[0],
+                cells[1],
+                cells[2],
+                int.Parse(cells[3])
+            );
+
+            lookUp[data.Id] = data;
+        }
+
+        return lookUp;
+    }
 }

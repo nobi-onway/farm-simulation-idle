@@ -2,13 +2,16 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public enum EPlotState { EMPTY, PLANTED, DECAY }
-public class Plot
+public enum EPlotState { LOCK, EMPTY, PLANTED, DECAY }
+public class Plot : IBuyableItem
 {
     private Producer _producer;
     private ProducerItem _producerItem;
     public bool CanHarvest => State == EPlotState.PLANTED && _producer.Yield > 0;
     public string ProducerItemId { get; private set; }
+    public string Name { get; private set; }
+    public string Id { get; private set; }
+    public int Price { get; private set; }
 
     private float _boost;
 
@@ -22,21 +25,27 @@ public class Plot
             OnStateChange?.Invoke(_state);
         }
     }
+
+    public Type StorageType => throw new NotImplementedException();
+
+    public string TransactionLabel => throw new NotImplementedException();
+
     public event Action<EPlotState> OnStateChange;
     public event Action<float> OnTimer;
     public event Action<int, int> OnYieldChange;
-    public event Action<ProducerItem> OnPlant;
     public event Action OnDecay;
 
-    public Plot(string producerItemId, MonoBehaviour runner)
+    public Plot(PlotData data)
     {
-        ProducerItemId = producerItemId;
-        State = EPlotState.EMPTY;
+        ProducerItemId = data.ProducerId;
+        Name = data.Name;
+        Id = data.Id;
+        Price = data.Price;
 
-        runner.StartCoroutine(IE_RunLifeCycle());
+        State = EPlotState.LOCK;
     }
 
-    private IEnumerator IE_RunLifeCycle()
+    public IEnumerator IE_RunLifeCycle()
     {
         while (true)
         {
@@ -55,7 +64,11 @@ public class Plot
 
     private IEnumerator IE_Decaying(float startTime, Action OnDecay)
     {
-        while (Time.time - startTime < _producerItem.DecayTimer) yield return null;
+        while (Time.time - startTime < _producerItem.DecayTimer && _producer.RemainingYield > 0)
+        {
+            OnTimer?.Invoke(_producerItem.DecayTimer - (Time.time - startTime));
+            yield return null;
+        }
 
         _producerItem = null;
         _producer = null;
@@ -69,7 +82,6 @@ public class Plot
 
         _producerItem = producerItem;
         _producer = new(producerItem.YieldInterval, producerItem.MaxYield, _boost);
-        OnPlant?.Invoke(_producerItem);
 
         State = EPlotState.PLANTED;
     }
@@ -87,5 +99,15 @@ public class Plot
     {
         _boost += 0.1f;
         _producer.YieldBoost = _boost;
+    }
+
+    public bool TryBuy(Wallet wallet, object storage)
+    {
+        if(storage is not FarmManager farmManager) return false;
+        if(!wallet.TryWithdraw(Price)) return false;
+
+        farmManager.AddPlot(this);
+        State = EPlotState.EMPTY;
+        return true;
     }
 }

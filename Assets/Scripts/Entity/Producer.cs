@@ -9,6 +9,7 @@ public class Producer
     private int _yieldInterval;
     public float YieldBoost { get; set; }
     public float Yield => _yield;
+    public float RemainingYield => _remainingYield;
 
     private float YieldTimer => (float)_yieldInterval / (1 + YieldBoost);
     public event Action<int, int> OnYieldChange;

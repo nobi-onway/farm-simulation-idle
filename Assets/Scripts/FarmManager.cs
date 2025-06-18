@@ -7,7 +7,6 @@ public class FarmManager : MonoSingleton<FarmManager>
     public Roster Roster { get; private set; }
     public Inventory Inventory { get; private set; }
 
-    public event Action<Plot> OnAddItem;
 
     private ResourceManager resourceManager => ResourceManager.Instance;
 
@@ -43,17 +42,13 @@ public class FarmManager : MonoSingleton<FarmManager>
     private void InitializePlots()
     {
         Plots = new();
-
-        foreach (ProducerData data in resourceManager.ProducerDataLookUp.Values)
-        {
-            AddPlot(new Plot(data.Id, this));
-        }
     }
 
     public void AddPlot(Plot plot)
     {
         Plots.Add(plot);
-        OnAddItem?.Invoke(plot);
+
+        StartCoroutine(plot.IE_RunLifeCycle());
     }
 
     public bool TryGetEmptyPlot(out Plot plot) => (plot = Plots.Find(p => p.State == EPlotState.EMPTY)) != null;

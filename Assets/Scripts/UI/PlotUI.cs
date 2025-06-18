@@ -6,7 +6,7 @@ public class PlotUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _producerTMP, _yieldTMP, _processTMP;
     [SerializeField] private Button _harvestButton, _upgradeButton;
-    [SerializeField] private RectTransform _producePanel, _plantPanel;
+    [SerializeField] private RectTransform _producePanel, _plantPanel, _lockPanel;
     [SerializeField] private Button _seedButtonPrefab;
 
     private Plot _plot;
@@ -30,24 +30,36 @@ public class PlotUI : MonoBehaviour
         _plot.OnStateChange += (state) =>
         {
             ShowPanelIf(_plantPanel, state == EPlotState.EMPTY);
-            ShowPanelIf(_producePanel, state == EPlotState.PLANTED);
+            ShowPanelIf(_producePanel, state == EPlotState.PLANTED || state == EPlotState.DECAY);
+            ShowPanelIf(_lockPanel, state == EPlotState.LOCK);
         };
 
         _plot.OnTimer += UpdateProcessTMP;
         _plot.OnYieldChange += UpdateYieldTMP;
-        _plot.OnPlant += UpdateProducerTMP;
         _plot.OnDecay += ResetUI;
 
+        UpdateProducerTMP(_plot.Name);
+
+        InitializeLockPanel();
         InitializePlantPanel();
+    }
+
+    private void InitializeLockPanel()
+    {
+        _lockPanel.gameObject.SetActive(true);
+
+        Button unlockButton = _lockPanel.GetComponentInChildren<Button>();
+        unlockButton.onClick.AddListener(() => _plot.TryBuy(GameManager.Instance.Wallet, FarmManager.Instance));
+
+        _lockPanel.GetComponentInChildren<TextMeshProUGUI>().SetText($"Unlock for {_plot.Price}");
     }
 
     private void InitializePlantPanel()
     {
-        _plantPanel.gameObject.SetActive(true);
+        Button produceButton = _plantPanel.GetComponentInChildren<Button>();
+        produceButton.onClick.AddListener(() => HandleSeedButtonPressed());
 
-        Button seedButton = Instantiate(_seedButtonPrefab, _plantPanel);
-        seedButton.GetComponentInChildren<TextMeshProUGUI>().SetText("Start Producer");
-        seedButton.onClick.AddListener(() => HandleSeedButtonPressed());
+        _plantPanel.GetComponentInChildren<TextMeshProUGUI>().SetText(_plot.Name);
     }
 
     private void HandleSeedButtonPressed()
@@ -72,9 +84,9 @@ public class PlotUI : MonoBehaviour
         _processTMP.SetText("0");
     }
 
-    private void UpdateProducerTMP(ProducerItem seed)
+    private void UpdateProducerTMP(string name)
     {
-        _producerTMP.SetText(seed.Name);
+        _producerTMP.SetText(name);
     }
 
     private void UpdateYieldTMP(int yield, int maxYield)
