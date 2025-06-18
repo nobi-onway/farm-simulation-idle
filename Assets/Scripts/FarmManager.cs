@@ -38,6 +38,8 @@ public class FarmManager : MonoBehaviour
     public void AddPlot(Plot plot)
     {
         Plots.Add(plot);
-        OnAddItem?.Invoke(plot);    
+        OnAddItem?.Invoke(plot);
     }
+
+    public bool TryGetEmptyPlot(out Plot plot) => (plot = Plots.Find(p => p.State == EPlotState.EMPTY)) != null;
 }

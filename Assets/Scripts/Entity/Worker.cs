@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using UnityEngine;
 
 public class Worker : IBuyableItem
 {
@@ -26,5 +28,18 @@ public class Worker : IBuyableItem
         roster.AddWorker(this);
 
         return true;
+    }
+
+    public IEnumerator IE_RunLifeCycle()
+    {
+        while (true)
+        {
+            Plot plot = null;
+            yield return new WaitUntil(() => FarmManager.Instance.TryGetEmptyPlot(out plot));
+
+            yield return new WaitForSeconds(3.0f);
+
+            plot?.PlantSeed(GameManager.Instance.Inventory);
+        }
     }
 }

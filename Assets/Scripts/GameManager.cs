@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializeRoster()
     {
-        Roster = new();
+        Roster = new(this);
     }
 
     private void InitializeShop()

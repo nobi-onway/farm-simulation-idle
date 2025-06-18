@@ -52,9 +52,7 @@ public class PlotUI : MonoBehaviour
 
     private void HandleSeedButtonPressed()
     {
-        if (!GameManager.Instance.Inventory.TryGetItem(_plot.ProducerItemId, out ProducerItem producerItem)) return;
-
-        _plot.PlantSeed(producerItem);
+        _plot.PlantSeed(GameManager.Instance.Inventory);
     }
 
     private void HandleHarvestButtonPressed()

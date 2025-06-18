@@ -15,7 +15,7 @@ public class Plot
     public EPlotState State
     {
         get => _state;
-        set
+        private set
         {
             _state = value;
             OnStateChange?.Invoke(_state);
@@ -62,10 +62,12 @@ public class Plot
         OnDecay?.Invoke();
     }
 
-    public void PlantSeed(ProducerItem seed)
-    {
-        _producerItem = seed;
-        _producer = new(seed.YieldInterval, seed.MaxYield, _boost);
+    public void PlantSeed(Inventory inventory)
+    {   
+        if(!inventory.TryGetItem(ProducerItemId, out ProducerItem producerItem)) return;
+
+        _producerItem = producerItem;
+        _producer = new(producerItem.YieldInterval, producerItem.MaxYield, _boost);
         OnPlant?.Invoke(_producerItem);
 
         State = EPlotState.PLANTED;
