@@ -57,4 +57,5 @@ public class FarmManager : MonoSingleton<FarmManager>
     }
 
     public bool TryGetEmptyPlot(out Plot plot) => (plot = Plots.Find(p => p.State == EPlotState.EMPTY)) != null;
+    public bool TryGetCanHarvestPlot(out Plot plot) => (plot = Plots.Find(p => p.CanHarvest)) != null;
 }

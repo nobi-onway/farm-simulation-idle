@@ -7,6 +7,7 @@ public class Plot
 {
     private Producer _producer;
     private ProducerItem _producerItem;
+    public bool CanHarvest => State == EPlotState.PLANTED && _producer.Yield > 0;
     public string ProducerItemId { get; private set; }
 
     private float _boost;

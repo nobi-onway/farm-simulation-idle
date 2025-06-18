@@ -7,16 +7,24 @@ public class Worker : IBuyableItem
     public string Id { get; private set; }
     public string Name { get; private set; }
     public int Price { get; private set; }
+    public int TaskDuration { get; private set; }
 
     public Type StorageType => typeof(Roster);
 
     public string TransactionLabel => $"Hire: {Price}";
+
+    private Plot _targetPlot;
+    private BTNode _root;
+    private float _actionStartTime;
 
     public Worker(WorkerData data)
     {
         Id = data.Id;
         Name = data.Name;
         Price = data.HireCost;
+        TaskDuration = data.TaskDuration;
+
+        _root = BuildBehaviorTree();
     }
 
     public bool TryBuy(Wallet wallet, object storage)
@@ -30,16 +38,48 @@ public class Worker : IBuyableItem
         return true;
     }
 
+    private BTNode BuildBehaviorTree()
+    {
+        return new SelectorNode
+        (
+            new SequenceNode
+            (
+                new ConditionNode(() => FarmManager.Instance.TryGetEmptyPlot(out _targetPlot)),
+                new TimerActionNode(() => DoAction(PlantSeed), TaskDuration)
+            ),
+            new SequenceNode
+            (
+                new ConditionNode(() => FarmManager.Instance.TryGetCanHarvestPlot(out _targetPlot)),
+                new TimerActionNode(() => DoAction(Harvest), TaskDuration)
+            )
+        );
+    }
+
+    private bool DoAction(Action action)
+    {
+        action?.Invoke();
+
+        return true;
+    }
+
+    private void PlantSeed()
+    {
+        _targetPlot.PlantSeed(FarmManager.Instance.Inventory);
+        _targetPlot = null;
+    }
+
+    private void Harvest()
+    {
+        _targetPlot.Harvest(FarmManager.Instance.Inventory);
+        _targetPlot = null;
+    }
+
     public IEnumerator IE_RunLifeCycle()
     {
         while (true)
         {
-            Plot plot = null;
-            yield return new WaitUntil(() => FarmManager.Instance.TryGetEmptyPlot(out plot));
-
-            yield return new WaitForSeconds(3.0f);
-
-            plot?.PlantSeed(FarmManager.Instance.Inventory);
+            _root.Execute();
+            yield return null;
         }
     }
 }
