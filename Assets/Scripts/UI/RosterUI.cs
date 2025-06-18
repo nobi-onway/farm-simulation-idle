@@ -18,6 +18,9 @@ public class RosterUI : MonoBehaviour
     private void GenerateWorkerUI(Worker worker)
     {
         RectTransform workerUI = Instantiate(_rosterUIPrefab, this.transform);
-        workerUI.GetComponentInChildren<TextMeshProUGUI>().SetText($"{worker.Name}: Idle");
+
+        workerUI.GetComponentInChildren<TextMeshProUGUI>().SetText($"{worker.Name}: \n {worker.State}");
+
+        worker.OnStateChange += state => workerUI.GetComponentInChildren<TextMeshProUGUI>().SetText($"{worker.Name}: \n {state}");
     }
 }

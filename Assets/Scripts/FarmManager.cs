@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class FarmManager : MonoSingleton<FarmManager>
 {
@@ -21,9 +23,14 @@ public class FarmManager : MonoSingleton<FarmManager>
         InitializePlots();
     }
 
+    private void Update()
+    {
+        Roster.ExecuteAllWorker();
+    }
+
     private void InitializeRoster()
     {
-        Roster = new(this);
+        Roster = new();
     }
 
     private void InitializeInventory()
@@ -51,6 +58,15 @@ public class FarmManager : MonoSingleton<FarmManager>
         StartCoroutine(plot.IE_RunLifeCycle());
     }
 
-    public bool TryGetEmptyPlot(out Plot plot) => (plot = Plots.Find(p => p.State == EPlotState.EMPTY)) != null;
-    public bool TryGetCanHarvestPlot(out Plot plot) => (plot = Plots.Find(p => p.CanHarvest)) != null;
+    public bool TryGetPlotWithCondition(out Plot plot, Func<Plot, bool> condition)
+    {
+        plot = Plots.FirstOrDefault(condition);
+
+        if (plot == null) return false;
+
+        plot.IsReserved = true;
+
+        Debug.Log($"Plot reserved: {plot.Name}");
+        return true;
+    }
 }

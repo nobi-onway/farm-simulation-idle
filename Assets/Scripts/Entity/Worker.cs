@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 
+public enum EWorkerState { IDLE, PLANTING, HARVESTING }
 public class Worker : IBuyableItem
 {
     public string Id { get; private set; }
@@ -15,6 +15,11 @@ public class Worker : IBuyableItem
     private Plot _targetPlot;
     private BTNode _root;
 
+    public EWorkerState State { get; private set; }
+    public event Action<EWorkerState> OnStateChange;
+
+    private WorkerData _data;
+
     public Worker(WorkerData data)
     {
         Id = data.Id;
@@ -22,6 +27,9 @@ public class Worker : IBuyableItem
         Price = data.HireCost;
         TaskDuration = data.TaskDuration;
 
+        _data = data;
+
+        State = EWorkerState.IDLE;
         _root = BuildBehaviorTree();
     }
 
@@ -31,24 +39,52 @@ public class Worker : IBuyableItem
 
         if (!wallet.TryWithdraw(Price)) return false;
 
-        roster.AddWorker(this);
+        roster.AddWorker(CreateInstance());
 
         return true;
     }
+
+    private Worker CreateInstance() => new(_data);
 
     private BTNode BuildBehaviorTree()
     {
         return new SelectorNode
         (
+            ExecuteCurrentState(),
+            DecideNextState()
+        );
+    }
+
+    private BTNode ExecuteCurrentState()
+    {
+        return new SelectorNode
+        (
             new SequenceNode
             (
-                new ConditionNode(() => FarmManager.Instance.TryGetEmptyPlot(out _targetPlot)),
+                new ConditionNode(() => State == EWorkerState.PLANTING),
                 new TimerActionNode(() => DoAction(PlantSeed), TaskDuration)
             ),
             new SequenceNode
             (
-                new ConditionNode(() => FarmManager.Instance.TryGetCanHarvestPlot(out _targetPlot)),
+                new ConditionNode(() => State == EWorkerState.HARVESTING),
                 new TimerActionNode(() => DoAction(Harvest), TaskDuration)
+            )
+        );
+    }
+
+    private BTNode DecideNextState()
+    {
+        return new SelectorNode
+        (
+            new SequenceNode
+            (
+                new ConditionNode(() => FarmManager.Instance.TryGetPlotWithCondition(out _targetPlot, p => p.IsFreeForWorker)),
+                new ActionNode(() => DoAction(() => SetState(EWorkerState.PLANTING)))
+            ),
+            new SequenceNode
+            (
+                new ConditionNode(() => FarmManager.Instance.TryGetPlotWithCondition(out _targetPlot, p => p.CanWorkerHarvest)),
+                new ActionNode(() => DoAction(() => SetState(EWorkerState.HARVESTING)))
             )
         );
     }
@@ -68,23 +104,31 @@ public class Worker : IBuyableItem
     private void PlantSeed()
     {
         _targetPlot.PlantSeed(FarmManager.Instance.Inventory);
+        _targetPlot.IsReserved = false;
         _targetPlot = null;
+
+        SetState(EWorkerState.IDLE);
     }
 
     private bool Harvest()
     {
         bool success = _targetPlot.TryHarvest(FarmManager.Instance.Inventory);
+        _targetPlot.IsReserved = false;
         _targetPlot = null;
+
+        SetState(EWorkerState.IDLE);
 
         return success;
     }
 
-    public IEnumerator IE_RunLifeCycle()
+    private void SetState(EWorkerState state)
     {
-        while (true)
-        {
-            _root.Execute();
-            yield return null;
-        }
+        State = state;
+        OnStateChange?.Invoke(state);
+    }
+
+    public void Execute()
+    {
+        _root.Execute();
     }
 }

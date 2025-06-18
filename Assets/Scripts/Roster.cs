@@ -8,20 +8,22 @@ public class Roster
 
     public event Action<Worker> OnAddWorker;
 
-    private MonoBehaviour _runner;
-
-    public Roster(MonoBehaviour runner)
+    public Roster()
     {
         Workers = new();
-
-        _runner = runner;
     }
 
     public void AddWorker(Worker worker)
     {
         Workers.Add(worker);
         OnAddWorker?.Invoke(worker);
+    }
 
-        _runner.StartCoroutine(worker.IE_RunLifeCycle());
+    public void ExecuteAllWorker()
+    {
+        foreach (Worker worker in Workers)
+        {
+            worker.Execute();
+        }
     }
 }

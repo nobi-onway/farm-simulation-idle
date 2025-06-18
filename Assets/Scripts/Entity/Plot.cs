@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using NUnit.Framework;
 using UnityEngine;
 
 public enum EPlotState { LOCK, EMPTY, PLANTED, DECAY }
@@ -7,7 +8,10 @@ public class Plot : IBuyableItem
 {
     private Producer _producer;
     private ProducerItem _producerItem;
-    public bool CanHarvest => State == EPlotState.PLANTED && _producer.Yield > 0;
+    public bool CanWorkerHarvest => (State == EPlotState.PLANTED || State == EPlotState.DECAY) && _producer.Yield > 0 && !IsReserved;
+    public bool IsFreeForWorker => State == EPlotState.EMPTY && !IsReserved;
+    public bool IsReserved { get; set; }
+
     public string ProducerItemId { get; private set; }
     public string Name { get; private set; }
     public string Id { get; private set; }
@@ -41,6 +45,7 @@ public class Plot : IBuyableItem
         Name = data.Name;
         Id = data.Id;
         Price = data.Price;
+        IsReserved = false;
 
         State = EPlotState.LOCK;
     }
