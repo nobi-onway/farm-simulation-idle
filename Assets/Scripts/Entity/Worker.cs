@@ -39,7 +39,7 @@ public class Worker : IBuyableItem
 
             yield return new WaitForSeconds(3.0f);
 
-            plot?.PlantSeed(GameManager.Instance.Inventory);
+            plot?.PlantSeed(FarmManager.Instance.Inventory);
         }
     }
 }

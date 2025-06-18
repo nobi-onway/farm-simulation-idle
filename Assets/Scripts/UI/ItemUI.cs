@@ -8,7 +8,7 @@ public class ItemUI : MonoBehaviour
 
     private void OnDisable()
     {
-        GameManager.Instance.Inventory.OnUpdateItem -= UpdateUI;
+        FarmManager.Instance.Inventory.OnUpdateItem -= UpdateUI;
     }
 
     private void Awake()
@@ -22,7 +22,7 @@ public class ItemUI : MonoBehaviour
 
         UpdateUI(item);
 
-        GameManager.Instance.Inventory.OnUpdateItem += UpdateUI;
+        FarmManager.Instance.Inventory.OnUpdateItem += UpdateUI;
     }
 
     private void UpdateUI(IInventoryItem item)

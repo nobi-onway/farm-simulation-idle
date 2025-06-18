@@ -52,12 +52,12 @@ public class PlotUI : MonoBehaviour
 
     private void HandleSeedButtonPressed()
     {
-        _plot.PlantSeed(GameManager.Instance.Inventory);
+        _plot.PlantSeed(FarmManager.Instance.Inventory);
     }
 
     private void HandleHarvestButtonPressed()
     {
-        _plot.Harvest();
+        _plot.Harvest(FarmManager.Instance.Inventory);
     }
 
     private void HandleUpgradeButtonPressed()

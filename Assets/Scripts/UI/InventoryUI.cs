@@ -7,12 +7,12 @@ public class InventoryUI : MonoBehaviour
 
     private void OnDisable()
     {
-        GameManager.Instance.Inventory.OnAddItem -= GenerateItem;
+        FarmManager.Instance.Inventory.OnAddItem -= GenerateItem;
     }
 
     private void Start()
     {
-        GameManager.Instance.Inventory.OnAddItem += GenerateItem;
+        FarmManager.Instance.Inventory.OnAddItem += GenerateItem;
 
         GenerateItems();
     }
@@ -21,7 +21,7 @@ public class InventoryUI : MonoBehaviour
     {
         Clear();
 
-        foreach (IInventoryItem item in GameManager.Instance.Inventory.Items)
+        foreach (IInventoryItem item in FarmManager.Instance.Inventory.Items)
         {
             GenerateItem(item);
         }

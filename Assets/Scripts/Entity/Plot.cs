@@ -73,11 +73,11 @@ public class Plot
         State = EPlotState.PLANTED;
     }
 
-    public void Harvest()
+    public void Harvest(Inventory inventory)
     {
         if (!_producer.TryConsumeYield(out int yield)) return;
 
-        GameManager.Instance.Inventory.AddItem(new Product(GameManager.Instance.ProductDataLookUp[_producerItem.Id]), yield);
+        inventory.AddItem(new Product(ResourceManager.Instance.ProductDataLookUp[_producerItem.Id]), yield);
     }
 
     public void Upgrade()

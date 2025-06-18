@@ -1,35 +1,50 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class FarmManager : MonoBehaviour
+public class FarmManager : MonoSingleton<FarmManager>
 {
-    private static FarmManager _instance;
-    public static FarmManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = GameObject.FindFirstObjectByType<FarmManager>();
-                if (_instance == null)
-                {
-                    _instance = new GameObject("FarmManager").AddComponent<FarmManager>();
-                }
-            }
-
-            return _instance;
-        }
-    }
     public List<Plot> Plots;
+    public Roster Roster { get; private set; }
+    public Inventory Inventory { get; private set; }
 
     public event Action<Plot> OnAddItem;
 
+    private ResourceManager resourceManager => ResourceManager.Instance;
+
+    private void Awake()
+    {
+        InitializeRoster();
+        InitializeInventory();
+    }
+
     private void Start()
+    {
+        InitializePlots();
+    }
+
+    private void InitializeRoster()
+    {
+        Roster = new(this);
+    }
+
+    private void InitializeInventory()
+    {
+        Inventory = new();
+
+        foreach (string key in resourceManager.InventoryDataLookUp.Keys)
+        {
+            ProducerItem producerItem = new(resourceManager.ProducerDataLookUp[key]);
+            int quantity = resourceManager.InventoryDataLookUp[key].Quantity;
+
+            Inventory.AddItem(producerItem, quantity);
+        }
+    }
+
+    private void InitializePlots()
     {
         Plots = new();
 
-        foreach (ProducerData data in GameManager.Instance.ProducerDataLookUp.Values)
+        foreach (ProducerData data in resourceManager.ProducerDataLookUp.Values)
         {
             AddPlot(new Plot(data.Id, this));
         }

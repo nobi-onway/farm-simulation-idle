@@ -12,8 +12,8 @@ public class ShopUI : MonoBehaviour
     {
         StorageLookUp = new()
         {
-            { typeof(Inventory), GameManager.Instance.Inventory },
-            { typeof(Roster), GameManager.Instance.Roster }
+            { typeof(Inventory), FarmManager.Instance.Inventory },
+            { typeof(Roster), FarmManager.Instance.Roster }
         };
 
         GenerateItems();

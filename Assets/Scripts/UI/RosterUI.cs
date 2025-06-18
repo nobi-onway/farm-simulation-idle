@@ -7,12 +7,12 @@ public class RosterUI : MonoBehaviour
 
     private void OnDisable()
     {
-        GameManager.Instance.Roster.OnAddWorker -= GenerateWorkerUI;
+        FarmManager.Instance.Roster.OnAddWorker -= GenerateWorkerUI;
     }
 
     private void Start()
     {
-        GameManager.Instance.Roster.OnAddWorker += GenerateWorkerUI;
+        FarmManager.Instance.Roster.OnAddWorker += GenerateWorkerUI;
     }
 
     private void GenerateWorkerUI(Worker worker)
