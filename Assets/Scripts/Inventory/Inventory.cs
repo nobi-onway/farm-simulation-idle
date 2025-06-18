@@ -36,4 +36,16 @@ public class Inventory
         OnUpdateItem?.Invoke(existingItem);
         return true;
     }
+
+    public bool TryGetItem<T>(string Id, out T item) where T : IInventoryItem
+    {
+        item = Items.OfType<T>().FirstOrDefault(i => i.Id == Id);
+
+        if (item == null) return false;
+        if (item.Quantity == 0) return false;
+
+        item.Quantity--;
+        OnUpdateItem?.Invoke(item);
+        return true;
+    }
 }

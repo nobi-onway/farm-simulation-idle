@@ -9,7 +9,7 @@ public class PlotUI : MonoBehaviour
     [SerializeField] private RectTransform _producePanel, _plantPanel;
     [SerializeField] private Button _seedButtonPrefab;
 
-    private Plot _plot = new();
+    private Plot _plot;
 
     private void OnEnable()
     {
@@ -23,8 +23,21 @@ public class PlotUI : MonoBehaviour
         _upgradeButton.onClick.RemoveListener(HandleUpgradeButtonPressed);
     }
 
-    private void Start()
+    public void Initialize(Plot plot)
     {
+        _plot = plot;
+
+        _plot.OnStateChange += (state) =>
+        {
+            ShowPanelIf(_plantPanel, state == EPlotState.EMPTY);
+            ShowPanelIf(_producePanel, state == EPlotState.PLANTED);
+        };
+
+        _plot.OnTimer += UpdateProcessTMP;
+        _plot.OnYieldChange += UpdateYieldTMP;
+        _plot.OnPlant += UpdateProducerTMP;
+        _plot.OnDecay += ResetUI;
+
         InitializePlantPanel();
     }
 
@@ -32,26 +45,16 @@ public class PlotUI : MonoBehaviour
     {
         _plantPanel.gameObject.SetActive(true);
 
-        foreach (RectTransform child in _plantPanel)
-        {
-            Destroy(child.gameObject);
-        }
-
-        foreach (ProducerItem seed in GameManager.Instance.Inventory.ProducerItems)
-        {
-            Button seedButton = Instantiate(_seedButtonPrefab, _plantPanel);
-            seedButton.GetComponentInChildren<TextMeshProUGUI>().SetText(seed.Name);
-            seedButton.onClick.AddListener(() => HandleSeedButtonPressed(seed));
-        }
+        Button seedButton = Instantiate(_seedButtonPrefab, _plantPanel);
+        seedButton.GetComponentInChildren<TextMeshProUGUI>().SetText("Start Producer");
+        seedButton.onClick.AddListener(() => HandleSeedButtonPressed());
     }
 
-    private void HandleSeedButtonPressed(ProducerItem seed)
+    private void HandleSeedButtonPressed()
     {
-        _plantPanel.gameObject.SetActive(false);
-        _plot.PlantSeed(seed);
+        if (!GameManager.Instance.Inventory.TryGetItem(_plot.ProducerItemId, out ProducerItem producerItem)) return;
 
-        _producePanel.gameObject.SetActive(true);
-        StartCoroutine(_plot.IE_Plant(UpdateProducerTMP, UpdateYieldTMP, UpdateProcessTMP, ResetUI));
+        _plot.PlantSeed(producerItem);
     }
 
     private void HandleHarvestButtonPressed()
@@ -69,15 +72,12 @@ public class PlotUI : MonoBehaviour
         _producerTMP.SetText("None");
         _yieldTMP.SetText("0/0");
         _processTMP.SetText("0");
-
-        _producePanel.gameObject.SetActive(false);
-        InitializePlantPanel();
     }
 
     private void UpdateProducerTMP(ProducerItem seed)
     {
         _producerTMP.SetText(seed.Name);
-    } 
+    }
 
     private void UpdateYieldTMP(int yield, int maxYield)
     {
@@ -87,5 +87,10 @@ public class PlotUI : MonoBehaviour
     private void UpdateProcessTMP(float timeLeft)
     {
         _processTMP.SetText(FormatterUtils.TimeFormatter(timeLeft));
+    }
+
+    private void ShowPanelIf(RectTransform panel, bool canShow)
+    {
+        panel.gameObject.SetActive(canShow);
     }
 }

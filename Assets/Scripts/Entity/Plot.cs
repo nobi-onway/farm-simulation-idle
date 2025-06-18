@@ -2,35 +2,73 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+public enum EPlotState { EMPTY, PLANTED, DECAY }
 public class Plot
 {
     private Producer _producer;
     private ProducerItem _producerItem;
+    public string ProducerItemId { get; private set; }
 
     private float _boost;
 
-    public void PlantSeed(ProducerItem seed)
+    private EPlotState _state;
+    public EPlotState State
     {
-        _producerItem = seed;
-        _producer = new(seed.YieldInterval, seed.MaxYield, _boost);
+        get => _state;
+        set
+        {
+            _state = value;
+            OnStateChange?.Invoke(_state);
+        }
+    }
+    public event Action<EPlotState> OnStateChange;
+    public event Action<float> OnTimer;
+    public event Action<int, int> OnYieldChange;
+    public event Action<ProducerItem> OnPlant;
+    public event Action OnDecay;
+
+    public Plot(string producerItemId, MonoBehaviour runner)
+    {
+        ProducerItemId = producerItemId;
+        State = EPlotState.EMPTY;
+
+        runner.StartCoroutine(IE_RunLifeCycle());
     }
 
-    public IEnumerator IE_Plant(Action<ProducerItem> OnPlant, Action<int, int> OnYieldChange, Action<float> OnTimer, Action OnDecay)
+    private IEnumerator IE_RunLifeCycle()
+    {
+        while (true)
+        {
+            yield return new WaitUntil(() => State == EPlotState.PLANTED);
+            yield return IE_Planting();
+            yield return IE_Decaying(Time.time, OnDecay);
+        }
+    }
+
+    private IEnumerator IE_Planting()
     {
         _producer.OnYieldChange += OnYieldChange;
-        OnPlant?.Invoke(_producerItem);
-
         yield return _producer.IE_Producing(OnTimer);
-        yield return IE_Decay(Time.time, OnDecay);
+        State = EPlotState.DECAY;
     }
 
-    public IEnumerator IE_Decay(float startTime, Action OnDecay)
+    private IEnumerator IE_Decaying(float startTime, Action OnDecay)
     {
         while (Time.time - startTime < _producerItem.DecayTimer) yield return null;
 
         _producerItem = null;
         _producer = null;
+        State = EPlotState.EMPTY;
         OnDecay?.Invoke();
+    }
+
+    public void PlantSeed(ProducerItem seed)
+    {
+        _producerItem = seed;
+        _producer = new(seed.YieldInterval, seed.MaxYield, _boost);
+        OnPlant?.Invoke(_producerItem);
+
+        State = EPlotState.PLANTED;
     }
 
     public void Harvest()
