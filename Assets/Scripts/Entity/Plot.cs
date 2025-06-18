@@ -74,11 +74,13 @@ public class Plot
         State = EPlotState.PLANTED;
     }
 
-    public void Harvest(Inventory inventory)
+    public bool TryHarvest(Inventory inventory)
     {
-        if (!_producer.TryConsumeYield(out int yield)) return;
+        if (_producer == null) return false;
+        if (!_producer.TryConsumeYield(out int yield)) return false;
 
         inventory.AddItem(new Product(ResourceManager.Instance.ProductDataLookUp[_producerItem.Id]), yield);
+        return true;
     }
 
     public void Upgrade()

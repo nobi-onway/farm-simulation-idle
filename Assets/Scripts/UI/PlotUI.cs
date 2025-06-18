@@ -57,7 +57,7 @@ public class PlotUI : MonoBehaviour
 
     private void HandleHarvestButtonPressed()
     {
-        _plot.Harvest(FarmManager.Instance.Inventory);
+        _plot.TryHarvest(FarmManager.Instance.Inventory);
     }
 
     private void HandleUpgradeButtonPressed()

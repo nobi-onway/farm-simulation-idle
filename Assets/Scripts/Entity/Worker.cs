@@ -15,7 +15,6 @@ public class Worker : IBuyableItem
 
     private Plot _targetPlot;
     private BTNode _root;
-    private float _actionStartTime;
 
     public Worker(WorkerData data)
     {
@@ -62,16 +61,23 @@ public class Worker : IBuyableItem
         return true;
     }
 
+    private bool DoAction(Func<bool> func)
+    {
+        return func.Invoke();
+    }
+
     private void PlantSeed()
     {
         _targetPlot.PlantSeed(FarmManager.Instance.Inventory);
         _targetPlot = null;
     }
 
-    private void Harvest()
+    private bool Harvest()
     {
-        _targetPlot.Harvest(FarmManager.Instance.Inventory);
+        bool success = _targetPlot.TryHarvest(FarmManager.Instance.Inventory);
         _targetPlot = null;
+
+        return success;
     }
 
     public IEnumerator IE_RunLifeCycle()

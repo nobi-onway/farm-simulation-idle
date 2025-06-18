@@ -23,8 +23,6 @@ public class TimerActionNode : BTNode
             return EBTNodeState.RUNNING;
         }
 
-        Debug.Log(FormatterUtils.TimeFormatter(Time.time - _startTime));
-
         if (Time.time - _startTime < _duration) return EBTNodeState.RUNNING;
 
         _isRunning = false;
