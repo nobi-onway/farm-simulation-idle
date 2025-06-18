@@ -66,7 +66,6 @@ public class FarmManager : MonoSingleton<FarmManager>
 
         plot.IsReserved = true;
 
-        Debug.Log($"Plot reserved: {plot.Name}");
         return true;
     }
 }
