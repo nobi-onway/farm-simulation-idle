@@ -14,4 +14,11 @@ public class Product : IInventoryItem, ISellableItem
         Name = data.Name;
         SellPrice = data.SellPrice;
     }
+
+    public void Sell(Wallet wallet, Inventory inventory)
+    {
+        wallet.Deposit(SellPrice * Quantity);
+        inventory.RemoveItem(this, Quantity);
+        Quantity = 0;
+    }
 }

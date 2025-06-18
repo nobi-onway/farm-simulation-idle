@@ -37,6 +37,12 @@ public class Inventory
         return true;
     }
 
+    public void RemoveItem(IInventoryItem item, int quantity)
+    {
+        item.Quantity -= quantity;
+        OnUpdateItem?.Invoke(item);
+    }
+
     public bool TryGetItem<T>(string Id, out T item) where T : IInventoryItem
     {
         item = Items.OfType<T>().FirstOrDefault(i => i.Id == Id);
