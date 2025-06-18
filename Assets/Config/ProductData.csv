@@ -1,4 +1,5 @@
 Id,ProducerId,Name,SellPrice
 tomato_fruit,tomato,Tomato,5
 blueberry_fruit,blueberry,Blueberry,8
+strawberry_fruit,strawberry,StrawBerry,10
 milk_gallon,cow,Milk,15

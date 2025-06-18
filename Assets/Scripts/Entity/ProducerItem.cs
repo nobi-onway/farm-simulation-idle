@@ -11,9 +11,13 @@ public class ProducerItem : IInventoryItem, IBuyableItem
     public string Id { get; private set; }
     public int DecayTimer { get; private set; }
 
-    public Type StorageType => typeof (Inventory);
+    public Type StorageType => typeof(Inventory);
 
     public string TransactionLabel => $"Buy: {Price}";
+
+    public bool BulkOnly { get; private set; }
+
+    public int BulkAmount { get; private set; }
 
     public ProducerItem(ProducerData data)
     {
@@ -29,6 +33,8 @@ public class ProducerItem : IInventoryItem, IBuyableItem
         Id = data.Id;
         Name = data.Name;
         Price = data.Price;
+        BulkOnly = data.BulkOnly;
+        BulkAmount = data.BulkAmount;
     }
 
     public bool TryBuy(Wallet wallet, object storage)
@@ -36,6 +42,6 @@ public class ProducerItem : IInventoryItem, IBuyableItem
         if (storage is not Inventory inventory) return false;
         if (!wallet.TryWithdraw(Price)) return false;
 
-        return inventory.TryAddItem(Id);
+        return BulkOnly ? inventory.TryAddItem(this, BulkAmount) : inventory.TryAddItem(this);
     }
 }

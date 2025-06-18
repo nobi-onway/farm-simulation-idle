@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 
 public class GameManager : MonoSingleton<GameManager>
 {
@@ -34,6 +33,6 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void InitializeWallet()
     {
-        Wallet = new(1000);
+        Wallet = new(10000);
     }
 }

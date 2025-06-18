@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class Inventory
 {
@@ -26,14 +27,22 @@ public class Inventory
         OnAddItem?.Invoke(item);
     }
 
-    public bool TryAddItem(string id)
+    private bool TryAddItem(string id, int quantity = 1)
     {
         IInventoryItem existingItem = Items.FirstOrDefault(i => i.Id == id);
 
         if (existingItem == null) return false;
 
-        existingItem.Quantity += 1;
+        existingItem.Quantity += quantity;
         OnUpdateItem?.Invoke(existingItem);
+        return true;
+    }
+
+    public bool TryAddItem(IInventoryItem inventoryItem, int quantity = 1)
+    {
+        if (TryAddItem(inventoryItem.Id, quantity)) return true;
+
+        AddItem(inventoryItem, quantity);
         return true;
     }
 

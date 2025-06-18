@@ -82,8 +82,8 @@ public class Plot : IBuyableItem
     }
 
     public void PlantSeed(Inventory inventory)
-    {   
-        if(!inventory.TryGetItem(ProducerItemId, out ProducerItem producerItem)) return;
+    {
+        if (!inventory.TryGetItem(ProducerItemId, out ProducerItem producerItem)) return;
 
         _producerItem = producerItem;
         _producer = new(producerItem.YieldInterval, producerItem.MaxYield, _boost);
