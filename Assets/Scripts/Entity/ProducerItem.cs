@@ -1,3 +1,5 @@
+using System;
+
 public class ProducerItem : IInventoryItem, IBuyableItem
 {
     public string Name { get; private set; }
@@ -8,6 +10,10 @@ public class ProducerItem : IInventoryItem, IBuyableItem
     public int Quantity { get; set; }
     public string Id { get; private set; }
     public int DecayTimer { get; private set; }
+
+    public Type StorageType => typeof (Inventory);
+
+    public string TransactionLabel => $"Buy: {Price}";
 
     public ProducerItem(ProducerData data)
     {
@@ -23,5 +29,13 @@ public class ProducerItem : IInventoryItem, IBuyableItem
         Id = data.Id;
         Name = data.Name;
         Price = data.Price;
+    }
+
+    public bool TryBuy(Wallet wallet, object storage)
+    {
+        if (storage is not Inventory inventory) return false;
+        if (!wallet.TryWithdraw(Price)) return false;
+
+        return inventory.TryAddItem(Id);
     }
 }

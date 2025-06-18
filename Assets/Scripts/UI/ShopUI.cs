@@ -1,25 +1,35 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ShopUI : MonoBehaviour
 {
     [SerializeField] private ShopItemUI _shopItemUIPrefab;
 
+    private Dictionary<Type, object> StorageLookUp;
+
     private void Start()
     {
+        StorageLookUp = new()
+        {
+            { typeof(Inventory), GameManager.Instance.Inventory },
+            { typeof(Roster), GameManager.Instance.Roster }
+        };
+
         GenerateItems();
     }
 
     private void GenerateItems()
     {
-        foreach (IBuyableItem shopItem in GameManager.Instance.Shop.Items)
+        foreach (IBuyableItem buyableItem in GameManager.Instance.Shop.BuyableItems)
         {
-            GenerateItem(shopItem);
+            GenerateItem(buyableItem);
         }
     }
 
-    private void GenerateItem(IBuyableItem shopItem)
+    private void GenerateItem(IBuyableItem buyableItem)
     {
         ShopItemUI shopItemUI = Instantiate(_shopItemUIPrefab, this.transform);
-        shopItemUI.Initialize(shopItem, () => GameManager.Instance.Shop.BuyItem(shopItem));
+        shopItemUI.Initialize(buyableItem, () => buyableItem.TryBuy(GameManager.Instance.Wallet, StorageLookUp[buyableItem.StorageType]));
     }
 }

@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     }
 
     public Inventory Inventory { get; private set; }
+    public Roster Roster { get; private set; }
     public Shop Shop { get; private set; }
     public Wallet Wallet { get; private set; }
 
@@ -29,12 +30,14 @@ public class GameManager : MonoBehaviour
     private Dictionary<string, InventoryData> InventoryDataLookUp;
     private Dictionary<string, ShopData> ShopDataLookUp;
     public Dictionary<string, ProductData> ProductDataLookUp;
+    private Dictionary<string, WorkerData> WorkerDataLookup;
 
     private void Awake()
     {
         InitialResource();
 
         InitializeInventory();
+        InitializeRoster();
         InitializeShop();
         InitializeWallet();
     }
@@ -45,6 +48,7 @@ public class GameManager : MonoBehaviour
         InventoryDataLookUp ??= LoaderUtils.LoadInventoryData("Assets/Config/InitialInventoryData.csv");
         ShopDataLookUp ??= LoaderUtils.LoadShopData();
         ProductDataLookUp ??= LoaderUtils.LoadProductData();
+        WorkerDataLookup ??= LoaderUtils.LoadWorkerData();
     }
 
     private void InitializeInventory()
@@ -60,6 +64,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void InitializeRoster()
+    {
+        Roster = new();
+    }
+
     private void InitializeShop()
     {
         Shop = new();
@@ -69,6 +78,13 @@ public class GameManager : MonoBehaviour
             ProducerItem producerItem = new(data);
 
             Shop.AddItem(producerItem);
+        }
+
+        foreach (WorkerData data in WorkerDataLookup.Values)
+        {
+            Worker worker = new(data);
+
+            Shop.AddItem(worker);
         }
     }
 

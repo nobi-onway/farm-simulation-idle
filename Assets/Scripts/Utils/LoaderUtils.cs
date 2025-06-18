@@ -94,4 +94,27 @@ public static class LoaderUtils
 
         return lookUp;
     }
+
+    public static Dictionary<string, WorkerData> LoadWorkerData()
+    {
+        string[] lines = File.ReadAllLines("Assets/Config/WorkerData.csv");
+        Dictionary<string, WorkerData> lookUp = new();
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] cells = lines[i].Split(',');
+
+            WorkerData data = new
+            (
+                cells[0],
+                cells[1],
+                int.Parse(cells[2]),
+                int.Parse(cells[3])
+            );
+
+            lookUp[data.Id] = data;
+        }
+
+        return lookUp;
+    }
 }
