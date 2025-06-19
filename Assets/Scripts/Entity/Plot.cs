@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using NUnit.Framework;
 using UnityEngine;
 
 public enum EPlotState { LOCK, EMPTY, PLANTED, DECAY }
@@ -39,13 +38,17 @@ public class Plot : IBuyableItem
     public event Action<int, int> OnYieldChange;
     public event Action OnDecay;
 
-    public Plot(PlotData data)
+    private Product _product;
+
+    public Plot(PlotData data, Product product)
     {
         ProducerItemId = data.ProducerId;
         Name = data.Name;
         Id = data.Id;
         Price = data.Price;
         IsReserved = false;
+
+        _product = product;
 
         State = EPlotState.LOCK;
     }
@@ -86,7 +89,7 @@ public class Plot : IBuyableItem
         if (!inventory.TryGetItem(ProducerItemId, out ProducerItem producerItem)) return;
 
         _producerItem = producerItem;
-        _producer = new(producerItem.YieldInterval, producerItem.MaxYield, _boost);
+        _producer = new(producerItem, _boost);
 
         State = EPlotState.PLANTED;
     }
@@ -96,7 +99,7 @@ public class Plot : IBuyableItem
         if (_producer == null) return false;
         if (!_producer.TryConsumeYield(out int yield)) return false;
 
-        inventory.AddItem(new Product(ResourceManager.Instance.ProductDataLookUp[_producerItem.Id]), yield);
+        inventory.AddItem(_product, yield);
         return true;
     }
 

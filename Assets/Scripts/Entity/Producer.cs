@@ -10,14 +10,14 @@ public class Producer
     public float YieldBoost { get; set; }
     public float Yield => _yield;
     public float RemainingYield => _remainingYield;
-
     private float YieldTimer => (float)_yieldInterval / (1 + YieldBoost);
+
     public event Action<int, int> OnYieldChange;
 
-    public Producer(int yieldInterval, int remainingYield, float yieldBoost = 0)
+    public Producer(ProducerItem producerItem, float yieldBoost = 0)
     {
-        _yieldInterval = yieldInterval;
-        _remainingYield = remainingYield;
+        _yieldInterval = producerItem.YieldInterval;
+        _remainingYield = producerItem.MaxYield;
         YieldBoost = yieldBoost;
 
         SetYield(0);
