@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class PlotUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _producerTMP, _yieldTMP, _processTMP;
+    [SerializeField] private TextMeshProUGUI _producerTMP, _yieldTMP, _processTMP, _levelTMP;
     [SerializeField] private Button _harvestButton, _upgradeButton;
     [SerializeField] private RectTransform _producePanel, _plantPanel, _lockPanel;
     [SerializeField] private Button _seedButtonPrefab;
@@ -29,6 +29,7 @@ public class PlotUI : MonoBehaviour
 
         HandleShowPanelOnPlotState(_plot.State);
         UpdateProducerTMP(_plot.Name);
+        UpdateLevelTMP(_plot.Level);
 
         _plot.OnStateChange += HandleShowPanelOnPlotState;
 
@@ -84,7 +85,9 @@ public class PlotUI : MonoBehaviour
 
     private void HandleUpgradeButtonPressed()
     {
-        _plot.Upgrade(GameManager.Instance.Wallet);
+        if (!_plot.TryUpgrade(GameManager.Instance.Wallet)) return;
+
+        UpdateLevelTMP(_plot.Level);
     }
 
     private void ResetUI()
@@ -106,6 +109,11 @@ public class PlotUI : MonoBehaviour
     private void UpdateProcessTMP(float timeLeft)
     {
         _processTMP.SetText(FormatterUtils.TimeFormatter(timeLeft));
+    }
+
+    private void UpdateLevelTMP(int level)
+    {
+        _levelTMP.SetText($"Level {level}: +{level * _plot.UpgradeBoost}%");
     }
 
     private void ShowPanelIf(RectTransform panel, bool canShow)

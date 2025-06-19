@@ -17,7 +17,8 @@ public class Plot : IBuyableItem
     public int Price { get; private set; }
     public int UpgradeCost { get; private set; }
     public int UpgradeBoost { get; private set; }
-    private float _boost;
+    public int Level { get; private set; }
+    private float Boost => Level * (float)UpgradeBoost / 100f;
 
     private EPlotState _state;
     public EPlotState State
@@ -49,6 +50,8 @@ public class Plot : IBuyableItem
         Price = data.Price;
         UpgradeCost = data.UpgradeCost;
         UpgradeBoost = data.UpgradeBoost;
+
+        Level = 0;
 
         IsReserved = false;
 
@@ -93,7 +96,7 @@ public class Plot : IBuyableItem
         if (!inventory.TryGetItem(ProducerItemId, out ProducerItem producerItem)) { OnFailed?.Invoke(); return; }
 
         _producerItem = producerItem;
-        _producer = new(producerItem, _boost);
+        _producer = new(producerItem, Boost);
 
         State = EPlotState.PLANTED;
     }
@@ -107,12 +110,14 @@ public class Plot : IBuyableItem
         return true;
     }
 
-    public void Upgrade(Wallet wallet)
+    public bool TryUpgrade(Wallet wallet)
     {
-        if(!wallet.TryWithdraw(UpgradeCost)) return;
+        if (!wallet.TryWithdraw(UpgradeCost)) return false;
 
-        _boost += (float)UpgradeBoost / 100;
-        _producer.YieldBoost = _boost;
+        Level++;
+        _producer.YieldBoost = Boost;
+
+        return true;
     }
 
     public bool TryBuy(Wallet wallet, object storage)

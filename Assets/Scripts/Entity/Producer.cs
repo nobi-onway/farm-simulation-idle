@@ -25,22 +25,21 @@ public class Producer
 
     public IEnumerator IE_Producing(Action<float> OnTimer)
     {
-        float timer = 0f;
+        float progress = 0f;
 
         while (_yield < _remainingYield)
         {
-            float timeLeft = Mathf.Max(YieldTimer - timer, 0);
-            OnTimer?.Invoke(timeLeft);
-
-            timer += Time.deltaTime;
-
-            if (timer >= YieldTimer)
+            while (progress < 1f)
             {
-                ProduceProduct();
-                timer = 0;
+                float speed = 1f / YieldTimer;
+                progress = Mathf.Clamp01(progress + Time.deltaTime * speed);
+
+                OnTimer?.Invoke((1 - progress) * YieldTimer);
+                yield return null;
             }
 
-            yield return null;
+            ProduceProduct();
+            progress = 0f;
         }
 
         OnYieldChange = null;
