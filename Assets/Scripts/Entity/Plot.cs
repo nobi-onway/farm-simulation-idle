@@ -16,7 +16,7 @@ public class Plot : IBuyableItem
     public string Id { get; private set; }
     public int Price { get; private set; }
     public int UpgradeCost { get; private set; }
-
+    public int UpgradeBoost { get; private set; }
     private float _boost;
 
     private EPlotState _state;
@@ -48,6 +48,7 @@ public class Plot : IBuyableItem
         Id = data.Id;
         Price = data.Price;
         UpgradeCost = data.UpgradeCost;
+        UpgradeBoost = data.UpgradeBoost;
 
         IsReserved = false;
 
@@ -110,7 +111,7 @@ public class Plot : IBuyableItem
     {
         if(!wallet.TryWithdraw(UpgradeCost)) return;
 
-        _boost += 0.1f;
+        _boost += (float)UpgradeBoost / 100;
         _producer.YieldBoost = _boost;
     }
 

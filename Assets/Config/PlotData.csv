@@ -1,7 +1,7 @@
-Id,ProducerId,Name,Price,UpgradeCost
-plot_01,tomato,Tomato Plot,0,500
-plot_02,blueberry,Blueberry Plot,0,500
-plot_03,cow,Cow Plot,0,500
-plot_04,strawberry,Strawberry Plot,500,500
-plot_05,tomato,Tomato Plot,500,500
-plot_06,blueberry,Blueberry Plot,500,500
+Id,ProducerId,Name,Price,UpgradeCost,UpgradeBoost
+plot_01,tomato,Tomato Plot,0,500,10
+plot_02,blueberry,Blueberry Plot,0,500,10
+plot_03,cow,Cow Plot,0,500,10
+plot_04,strawberry,Strawberry Plot,500,500,10
+plot_05,tomato,Tomato Plot,500,500,10
+plot_06,blueberry,Blueberry Plot,500,500,10

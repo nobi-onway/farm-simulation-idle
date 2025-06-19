@@ -38,6 +38,7 @@ public class PlotUI : MonoBehaviour
 
         InitializeLockPanel();
         InitializePlantPanel();
+        InitializeProducePanel();
     }
 
     private void HandleShowPanelOnPlotState(EPlotState state)
@@ -61,6 +62,11 @@ public class PlotUI : MonoBehaviour
         produceButton.onClick.AddListener(() => HandleSeedButtonPressed());
 
         _plantPanel.GetComponentInChildren<TextMeshProUGUI>().SetText(_plot.Name);
+    }
+
+    private void InitializeProducePanel()
+    {
+        _upgradeButton.GetComponentInChildren<TextMeshProUGUI>().SetText($"Upgrade for {_plot.UpgradeCost}");
     }
 
     private void HandleSeedButtonPressed()
