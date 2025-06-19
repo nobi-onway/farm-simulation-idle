@@ -114,7 +114,7 @@ public class Plot : IBuyableItem
         if(storage is not FarmManager farmManager) return false;
         if(!wallet.TryWithdraw(Price)) return false;
 
-        farmManager.AddPlot(this);
+        farmManager.AddToOwnedPlots(this);
         State = EPlotState.EMPTY;
         return true;
     }

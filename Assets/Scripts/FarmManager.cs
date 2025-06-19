@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class FarmManager : MonoSingleton<FarmManager>
 {
     public List<Plot> Plots;
+    public List<Plot> OwnedPlots;
     public Roster Roster { get; private set; }
     public Inventory Inventory { get; private set; }
 
@@ -49,11 +49,21 @@ public class FarmManager : MonoSingleton<FarmManager>
     private void InitializePlots()
     {
         Plots = new();
+        OwnedPlots = new();
+
+        foreach (PlotData data in ResourceManager.Instance.PlotDataLookup.Values)
+        {
+            Product product = new(ResourceManager.Instance.ProductDataLookUp[data.ProducerId]);
+
+            Plot plot = new(data, product);
+
+            Plots.Add(plot);
+        }
     }
 
-    public void AddPlot(Plot plot)
+    public void AddToOwnedPlots(Plot plot)
     {
-        Plots.Add(plot);
+        OwnedPlots.Add(plot);
 
         StartCoroutine(plot.IE_RunLifeCycle());
     }

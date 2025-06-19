@@ -7,11 +7,9 @@ public class FarmUI : MonoBehaviour
 
     private void Start()
     {
-        foreach (PlotData data in ResourceManager.Instance.PlotDataLookup.Values)
+        foreach (Plot plot in FarmManager.Instance.Plots)
         {
-            Product product = new(ResourceManager.Instance.ProductDataLookUp[data.ProducerId]);
-
-            GeneratePlotUI(new Plot(data, product));
+            GeneratePlotUI(plot);
         }
     }
 

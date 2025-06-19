@@ -27,27 +27,28 @@ public class PlotUI : MonoBehaviour
     {
         _plot = plot;
 
-        _plot.OnStateChange += (state) =>
-        {
-            ShowPanelIf(_plantPanel, state == EPlotState.EMPTY);
-            ShowPanelIf(_producePanel, state == EPlotState.PLANTED || state == EPlotState.DECAY);
-            ShowPanelIf(_lockPanel, state == EPlotState.LOCK);
-        };
+        HandleShowPanelOnPlotState(_plot.State);
+        UpdateProducerTMP(_plot.Name);
+
+        _plot.OnStateChange += HandleShowPanelOnPlotState;
 
         _plot.OnTimer += UpdateProcessTMP;
         _plot.OnYieldChange += UpdateYieldTMP;
         _plot.OnDecay += ResetUI;
 
-        UpdateProducerTMP(_plot.Name);
-
         InitializeLockPanel();
         InitializePlantPanel();
     }
 
+    private void HandleShowPanelOnPlotState(EPlotState state)
+    {
+        ShowPanelIf(_plantPanel, state == EPlotState.EMPTY);
+        ShowPanelIf(_producePanel, state == EPlotState.PLANTED || state == EPlotState.DECAY);
+        ShowPanelIf(_lockPanel, state == EPlotState.LOCK);
+    }
+
     private void InitializeLockPanel()
     {
-        _lockPanel.gameObject.SetActive(true);
-
         Button unlockButton = _lockPanel.GetComponentInChildren<Button>();
         unlockButton.onClick.AddListener(() => _plot.TryBuy(GameManager.Instance.Wallet, FarmManager.Instance));
 
@@ -79,7 +80,6 @@ public class PlotUI : MonoBehaviour
 
     private void ResetUI()
     {
-        _producerTMP.SetText("None");
         _yieldTMP.SetText("0/0");
         _processTMP.SetText("0");
     }
