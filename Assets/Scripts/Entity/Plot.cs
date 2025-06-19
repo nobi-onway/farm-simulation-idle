@@ -18,7 +18,7 @@ public class Plot : IBuyableItem
     public int UpgradeCost { get; private set; }
     public int UpgradeBoost { get; private set; }
     public int Level { get; private set; }
-    private float Boost => Level * (float)UpgradeBoost / 100f;
+    public float Boost => (Level - 1) * (float)UpgradeBoost / 100f;
 
     private EPlotState _state;
     public EPlotState State
@@ -48,10 +48,9 @@ public class Plot : IBuyableItem
         Name = data.Name;
         Id = data.Id;
         Price = data.Price;
+        Level = data.Level;
         UpgradeCost = data.UpgradeCost;
         UpgradeBoost = data.UpgradeBoost;
-
-        Level = 0;
 
         IsReserved = false;
 

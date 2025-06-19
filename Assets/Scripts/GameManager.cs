@@ -1,3 +1,4 @@
+using System;
 
 public class GameManager : MonoSingleton<GameManager>
 {
@@ -5,6 +6,8 @@ public class GameManager : MonoSingleton<GameManager>
     public Wallet Wallet { get; private set; }
 
     private ResourceManager resourceManager => ResourceManager.Instance;
+
+    public event Action OnEndGame;
 
     private void Awake()
     {
@@ -33,6 +36,14 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void InitializeWallet()
     {
-        Wallet = new(5000, () => FloatingTextUI.Instance.ShowText("Not enough money."));
+        int startBalance = resourceManager.GameConfigDataLookUp["StartBalance"].Value;
+        int targetBalance = resourceManager.GameConfigDataLookUp["TargetBalance"].Value;
+
+        Wallet = new(startBalance, () => FloatingTextUI.Instance.ShowText("Not enough money."));
+
+        Wallet.OnBalanceChange += (balance) =>
+        {
+            if(balance >= targetBalance) OnEndGame?.Invoke();
+        };
     }
 }

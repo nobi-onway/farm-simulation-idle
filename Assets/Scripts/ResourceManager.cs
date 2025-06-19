@@ -16,7 +16,10 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
     private Dictionary<string, WorkerData> _workerDataLookup;
     public Dictionary<string, WorkerData> WorkerDataLookup => _workerDataLookup ??= LoaderUtils.LoadWorkerData();
-    
+
     private Dictionary<string, PlotData> _plotDataLookUp;
     public Dictionary<string, PlotData> PlotDataLookup => _plotDataLookUp ??= LoaderUtils.LoadPlotData();
+    
+    private Dictionary<string, GameConfigData> _gameConfigDataLookUp;
+    public Dictionary<string, GameConfigData> GameConfigDataLookUp => _gameConfigDataLookUp ??= LoaderUtils.LoadGameConfigData();
 }

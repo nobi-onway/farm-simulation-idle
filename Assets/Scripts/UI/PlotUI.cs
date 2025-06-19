@@ -87,7 +87,7 @@ public class PlotUI : MonoBehaviour
     {
         if (!_plot.TryUpgrade(GameManager.Instance.Wallet)) return;
 
-        UpdateLevelTMP(_plot.Level);
+        UpdateLevelTMP(_plot.Level, _plot.Boost);
     }
 
     private void ResetUI()
@@ -111,9 +111,9 @@ public class PlotUI : MonoBehaviour
         _processTMP.SetText(FormatterUtils.TimeFormatter(timeLeft));
     }
 
-    private void UpdateLevelTMP(int level)
+    private void UpdateLevelTMP(int level, float upgradeBoost = 0)
     {
-        _levelTMP.SetText($"Level {level}: +{level * _plot.UpgradeBoost}%");
+        _levelTMP.SetText($"Level {level}: +{upgradeBoost * 100}%");
     }
 
     private void ShowPanelIf(RectTransform panel, bool canShow)

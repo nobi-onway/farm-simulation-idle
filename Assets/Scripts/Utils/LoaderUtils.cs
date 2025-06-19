@@ -134,10 +134,32 @@ public static class LoaderUtils
                 cells[2],
                 int.Parse(cells[3]),
                 int.Parse(cells[4]),
-                int.Parse(cells[5])
+                int.Parse(cells[5]),
+                int.Parse(cells[6])
             );
 
             lookUp[data.Id] = data;
+        }
+
+        return lookUp;
+    }
+
+    public static Dictionary<string, GameConfigData> LoadGameConfigData()
+    {
+        string[] lines = File.ReadAllLines("Assets/Config/GameConfigData.csv");
+        Dictionary<string, GameConfigData> lookUp = new();
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] cells = lines[i].Split(',');
+
+            GameConfigData data = new
+            (
+                cells[0],
+                int.Parse(cells[1])
+            );
+
+            lookUp[data.Key] = data;
         }
 
         return lookUp;
