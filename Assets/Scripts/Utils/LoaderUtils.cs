@@ -132,7 +132,8 @@ public static class LoaderUtils
                 cells[0],
                 cells[1],
                 cells[2],
-                int.Parse(cells[3])
+                int.Parse(cells[3]),
+                int.Parse(cells[4])
             );
 
             lookUp[data.Id] = data;

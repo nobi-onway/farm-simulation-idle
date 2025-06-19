@@ -15,6 +15,7 @@ public class Plot : IBuyableItem
     public string Name { get; private set; }
     public string Id { get; private set; }
     public int Price { get; private set; }
+    public int UpgradeCost { get; private set; }
 
     private float _boost;
 
@@ -46,6 +47,8 @@ public class Plot : IBuyableItem
         Name = data.Name;
         Id = data.Id;
         Price = data.Price;
+        UpgradeCost = data.UpgradeCost;
+
         IsReserved = false;
 
         _product = product;
@@ -84,9 +87,9 @@ public class Plot : IBuyableItem
         OnDecay?.Invoke();
     }
 
-    public void PlantSeed(Inventory inventory)
+    public void PlantSeed(Inventory inventory, Action OnFailed = null)
     {
-        if (!inventory.TryGetItem(ProducerItemId, out ProducerItem producerItem)) return;
+        if (!inventory.TryGetItem(ProducerItemId, out ProducerItem producerItem)) { OnFailed?.Invoke(); return; }
 
         _producerItem = producerItem;
         _producer = new(producerItem, _boost);
@@ -103,8 +106,10 @@ public class Plot : IBuyableItem
         return true;
     }
 
-    public void Upgrade()
+    public void Upgrade(Wallet wallet)
     {
+        if(!wallet.TryWithdraw(UpgradeCost)) return;
+
         _boost += 0.1f;
         _producer.YieldBoost = _boost;
     }

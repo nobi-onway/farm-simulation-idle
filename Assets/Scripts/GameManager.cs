@@ -33,6 +33,6 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void InitializeWallet()
     {
-        Wallet = new(10000);
+        Wallet = new(500, () => FloatingTextUI.Instance.ShowText("Not enough money."));
     }
 }

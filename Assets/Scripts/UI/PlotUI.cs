@@ -65,17 +65,20 @@ public class PlotUI : MonoBehaviour
 
     private void HandleSeedButtonPressed()
     {
-        _plot.PlantSeed(FarmManager.Instance.Inventory);
+        _plot.PlantSeed(FarmManager.Instance.Inventory, () => FloatingTextUI.Instance.ShowText("Inventory has no producer item."));
     }
 
     private void HandleHarvestButtonPressed()
     {
-        _plot.TryHarvest(FarmManager.Instance.Inventory);
+        if (!_plot.TryHarvest(FarmManager.Instance.Inventory))
+        {
+            FloatingTextUI.Instance.ShowText("Can not harvest in this time.");                
+        }
     }
 
     private void HandleUpgradeButtonPressed()
     {
-        _plot.Upgrade();
+        _plot.Upgrade(GameManager.Instance.Wallet);
     }
 
     private void ResetUI()
