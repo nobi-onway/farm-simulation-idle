@@ -65,5 +65,5 @@ cd farm-simulation-idle
 * Mở project
 
 ### 3. Thiết lập & chạy
-* Mở scene chính: Scenes/Main.unity (hoặc tương ứng trong thư mục Assets/Scenes)
+* Mở scene chính: Assets/Scenes/GameScene.unity
 * Nhấn Play để bắt đầu trải nghiệm game
